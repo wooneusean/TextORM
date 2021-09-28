@@ -1,12 +1,15 @@
 package win.woon;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TestApp {
     public static void main(String[] args) {
         // seedVaccines();
 
-        ArrayList<Vaccine> vaccines = TextORM.getAll(Vaccine.class, stringObjectHashMap -> Integer.parseInt(stringObjectHashMap.get("daysBetweenDoses")) <= 30);
+        ArrayList<Vaccine> vaccines = TextORM.getAll(Vaccine.class, dataMap -> Integer.parseInt(dataMap.get("daysBetweenDoses")) <= 30);
+
+        Vaccine sinovac = TextORM.getOne(Vaccine.class, dataMap -> Objects.equals(dataMap.get("vaccineName"), "Sinovac"));
 
         if (vaccines != null) {
             for (Vaccine vaccine : vaccines) {
