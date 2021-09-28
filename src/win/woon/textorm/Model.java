@@ -1,4 +1,4 @@
-package win.woon;
+package win.woon.textorm;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static win.woon.TextORM.fromSaveString;
-import static win.woon.TextORM.getRepositoryStorageLocation;
+import static win.woon.textorm.TextORM.fromSaveString;
+import static win.woon.textorm.TextORM.getRepositoryStorageLocation;
 
 public class Model<T> {
     @Column

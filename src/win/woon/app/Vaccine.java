@@ -1,4 +1,8 @@
-package win.woon;
+package win.woon.app;
+
+import win.woon.textorm.Column;
+import win.woon.textorm.Model;
+import win.woon.textorm.Repository;
 
 @Repository
 public class Vaccine extends Model<Vaccine> {
