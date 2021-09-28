@@ -13,7 +13,7 @@ import java.util.function.Function;
 public class TextORM {
     private static final Path storagePath = Paths.get("");
 
-    protected static <T> ArrayList<T> getAll(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
+    public static <T> ArrayList<T> getAll(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
         ArrayList<T> models = new ArrayList<>();
 
         try {
@@ -44,7 +44,7 @@ public class TextORM {
         return null;
     }
 
-    protected static <T> T getOne(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
+    public static <T> T getOne(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
         try {
             Path storageLocation = getRepositoryStorageLocation(model);
             if (!Files.exists(storageLocation)) return null;
