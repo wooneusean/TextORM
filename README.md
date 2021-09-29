@@ -16,7 +16,7 @@ Vaccine sinovac = TextORM.getOne(Vaccine.class, dataMap -> Objects.equals(dataMa
 And saving data is as easy as
 
 ```java
-new Vaccine(1, "Sinovac", 21, false).save();
+new Vaccine("Sinovac", 21, false).save();
 ```
 
 ## Creating models
@@ -36,8 +36,7 @@ public class Vaccine extends Model<Vaccine> {
     @Column
     public boolean isFinished = false;
 
-    public Vaccine(int id, String vaccineName, int daysBetweenDoses, boolean isFinished) {
-        this.id = id;
+    public Vaccine(String vaccineName, int daysBetweenDoses, boolean isFinished) {
         this.vaccineName = vaccineName;
         this.daysBetweenDoses = daysBetweenDoses;
         this.isFinished = isFinished;
