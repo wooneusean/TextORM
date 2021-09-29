@@ -1,0 +1,5 @@
+vaccineName:Sinovac|cost:120.0|daysBetweenDoses:57|id:0|isFinished:false
+vaccineName:Moderna|cost:200.0|daysBetweenDoses:14|id:1|isFinished:true
+vaccineName:Pfizer|cost:160.0|daysBetweenDoses:14|id:2|isFinished:false
+vaccineName:Sinopharm|cost:240.0|daysBetweenDoses:14|id:3|isFinished:false
+vaccineName:Johnson&Johnson|cost:140.0|daysBetweenDoses:21|id:4|isFinished:false

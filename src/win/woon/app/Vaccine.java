@@ -14,10 +14,13 @@ public class Vaccine extends Model<Vaccine> {
     public int daysBetweenDoses;
 
     @Column
+    public double cost;
+
+    @Column
     public boolean isFinished = false;
 
-    public Vaccine(int id, String vaccineName, int daysBetweenDoses, boolean isFinished) {
-        this.id = id;
+    public Vaccine(String vaccineName, int daysBetweenDoses, double cost, boolean isFinished) {
+        this.cost = cost;
         this.vaccineName = vaccineName;
         this.daysBetweenDoses = daysBetweenDoses;
         this.isFinished = isFinished;

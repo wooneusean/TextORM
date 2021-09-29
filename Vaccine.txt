@@ -1,5 +1,0 @@
-vaccineName:Sinovac|daysBetweenDoses:21|id:1|isFinished:false
-vaccineName:Moderna|daysBetweenDoses:14|id:2|isFinished:true
-vaccineName:Pfizer|daysBetweenDoses:14|id:3|isFinished:false
-vaccineName:Sinopharm|daysBetweenDoses:14|id:4|isFinished:false
-vaccineName:Johnson&Johnson|daysBetweenDoses:21|id:5|isFinished:false
