@@ -28,13 +28,13 @@ Here is an example model
 public class Vaccine extends Model<Vaccine> {
 
     @Column
-    public String vaccineName;
+    private String vaccineName;
 
     @Column
-    public int daysBetweenDoses;
+    private int daysBetweenDoses;
 
     @Column
-    public boolean isFinished = false;
+    private boolean isFinished = false;
 
     public Vaccine(String vaccineName, int daysBetweenDoses, boolean isFinished) {
         this.vaccineName = vaccineName;
