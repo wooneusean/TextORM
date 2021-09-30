@@ -4,6 +4,8 @@ import win.woon.textorm.Column;
 import win.woon.textorm.Model;
 import win.woon.textorm.Repository;
 
+import java.time.LocalDate;
+
 @Repository
 public class Person extends Model<Person> {
     @Column
@@ -15,13 +17,25 @@ public class Person extends Model<Person> {
     @Column
     private double balance;
 
-    public Person(String name, int age, double balance) {
+    @Column
+    private LocalDate birthDate;
+
+    public Person(String name, int age, double balance, LocalDate birthDate) {
         this.name = name;
         this.age = age;
         this.balance = balance;
+        this.birthDate = birthDate;
     }
 
     public Person() {
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getName() {
@@ -54,6 +68,7 @@ public class Person extends Model<Person> {
                 "name='" + name + '\'' +
                 ", age=" + age +
                 ", balance=" + balance +
+                ", birthDate=" + birthDate +
                 '}';
     }
 }

@@ -3,6 +3,8 @@ package win.woon.app;
 import win.woon.textorm.TextORM;
 
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +39,7 @@ public class TestApp {
         Account account1 = TextORM.getOne(Account.class, dataMap -> Double.parseDouble(dataMap.get("balance")) <= 3000.00);
         if (account1 != null) {
             System.out.println(account1);
+            System.out.println("Age of " + account1.getName() + " is " + ChronoUnit.YEARS.between(account1.getBirthDate(), LocalDate.now()));
         }
     }
 
@@ -65,9 +68,9 @@ public class TestApp {
 
     static void seedAccount() {
         if (!Files.exists(TextORM.getRepositoryStorageLocation(Account.class))) {
-            new Account("John Doe", 24, 4000.00, "j.doe", "123").save();
-            new Account("Jane Smith", 24, 2300.00, "j.smith", "123").save();
-            new Account("Julian Summers", 24, 5000.00, "summers.j", "123").save();
+            new Account("John Doe", 24, 4000.00, LocalDate.of(2001, 3, 6), "j.doe", "123").save();
+            new Account("Jane Smith", 24, 2300.00, LocalDate.of(2000, 6, 26), "j.smith", "123").save();
+            new Account("Julian Summers", 24, 5000.00, LocalDate.of(2001, 12, 2), "summers.j", "123").save();
         }
     }
 }

@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +92,8 @@ public class TextORM {
             newValue = Boolean.parseBoolean(value);
         } else if (Double.class.isAssignableFrom(currentField.getType()) || double.class.isAssignableFrom(currentField.getType())) {
             newValue = Double.parseDouble(value);
+        } else if (LocalDate.class.isAssignableFrom(currentField.getType())) {
+            newValue = LocalDate.parse(value);
         }
 
         try {

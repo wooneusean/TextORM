@@ -3,6 +3,8 @@ package win.woon.app;
 import win.woon.textorm.Column;
 import win.woon.textorm.Repository;
 
+import java.time.LocalDate;
+
 @Repository
 public class Account extends Person {
     @Column
@@ -11,8 +13,8 @@ public class Account extends Person {
     @Column
     private String password;
 
-    public Account(String name, int age, double balance, String username, String password) {
-        super(name, age, balance);
+    public Account(String name, int age, double balance, LocalDate birthDate, String username, String password) {
+        super(name, age, balance, birthDate);
         this.username = username;
         this.password = password;
     }
