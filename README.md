@@ -19,6 +19,18 @@ And saving data is as easy as
 new Vaccine("Sinovac", 21, false).save();
 ```
 
+All-in-one example
+```java
+Vaccine sinovac = new Vaccine("Sinovac", 21, 120.00, false).save();
+foundVaccine.setCost(100.00);
+foundVaccine.save();
+
+Vaccine finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
+for (Vaccine vaccine : finishedVaccines) {
+    vaccine.delete();
+}
+```
+
 ## Creating models
 
 Here is an example model
