@@ -1,8 +1,8 @@
-package win.woon.app;
+package io.github.euseanwoon2016.app;
 
-import win.woon.textorm.Column;
-import win.woon.textorm.Model;
-import win.woon.textorm.Repository;
+import io.github.euseanwoon2016.textorm.Column;
+import io.github.euseanwoon2016.textorm.Model;
+import io.github.euseanwoon2016.textorm.Repository;
 
 @Repository
 public class VaccineCenter extends Model<VaccineCenter> {

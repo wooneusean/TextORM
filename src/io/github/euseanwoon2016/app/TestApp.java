@@ -1,6 +1,6 @@
-package win.woon.app;
+package io.github.euseanwoon2016.app;
 
-import win.woon.textorm.TextORM;
+import io.github.euseanwoon2016.textorm.TextORM;
 
 import java.nio.file.Files;
 import java.time.LocalDate;

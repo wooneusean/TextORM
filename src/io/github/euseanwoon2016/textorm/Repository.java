@@ -1,4 +1,4 @@
-package win.woon.textorm;
+package io.github.euseanwoon2016.textorm;
 
 import java.lang.annotation.*;
 
