@@ -17,27 +17,33 @@ public class TestApp {
 
         if (vaccines != null) {
             for (Vaccine vaccine : vaccines) {
-                System.out.printf("[%d] %s, %d day(s) between doses. Finished: %b%n", vaccine.id, vaccine.vaccineName, vaccine.daysBetweenDoses, vaccine.isFinished);
+                System.out.printf("[%d] %s, %d day(s) between doses. Finished: %b%n", vaccine.getId(), vaccine.getVaccineName(), vaccine.getDaysBetweenDoses(), vaccine.isFinished());
             }
         }
 
         Vaccine sinovac = TextORM.getOne(Vaccine.class, dataMap -> Objects.equals(dataMap.get("vaccineName"), "Sinovac"));
 
         if (sinovac != null) {
-            System.out.printf("[%d] %s, %d day(s) between doses. Finished: %b%n", sinovac.id, sinovac.vaccineName, sinovac.daysBetweenDoses, sinovac.isFinished);
-            sinovac.daysBetweenDoses = (int) (Math.random() * 100);
+            System.out.printf("[%d] %s, %d day(s) between doses. Finished: %b%n", sinovac.getId(), sinovac.getVaccineName(), sinovac.getDaysBetweenDoses(), sinovac.isFinished());
+            sinovac.setDaysBetweenDoses((int) (Math.random() * 100));
             sinovac.save();
         }
 
         VaccineCenter center = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"));
         if (center != null) {
-            System.out.println(center.name);
+            System.out.println(center.getName());
+        }
+
+        Account account1 = TextORM.getOne(Account.class, dataMap -> Double.parseDouble(dataMap.get("balance")) <= 3000.00);
+        if (account1 != null) {
+            System.out.println(account1);
         }
     }
 
     static void seedModels() {
         seedVaccines();
         seedCenters();
+        seedAccount();
     }
 
     static void seedVaccines() {
@@ -46,7 +52,7 @@ public class TestApp {
             new Vaccine("Moderna", 14, 200.00, true).save();
             new Vaccine("Pfizer", 14, 160.00, false).save();
             new Vaccine("Sinopharm", 14, 240.00, false).save();
-            new Vaccine("Johnson&Johnson", 21, 140.00, false).save();
+            new Vaccine("Johnson & Johnson", 21, 140.00, false).save();
         }
     }
 
@@ -54,6 +60,14 @@ public class TestApp {
         if (!Files.exists(TextORM.getRepositoryStorageLocation(VaccineCenter.class))) {
             new VaccineCenter("Movenpick", 23.00, 304.00).save();
             new VaccineCenter("Bukit Jalil Stadium", 44.00, 201.00).save();
+        }
+    }
+
+    static void seedAccount() {
+        if (!Files.exists(TextORM.getRepositoryStorageLocation(Account.class))) {
+            new Account("John Doe", 24, 4000.00, "j.doe", "123").save();
+            new Account("Jane Smith", 24, 2300.00, "j.smith", "123").save();
+            new Account("Julian Summers", 24, 5000.00, "summers.j", "123").save();
         }
     }
 }

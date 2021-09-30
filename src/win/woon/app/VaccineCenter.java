@@ -7,13 +7,13 @@ import win.woon.textorm.Repository;
 @Repository
 public class VaccineCenter extends Model<VaccineCenter> {
     @Column
-    public String name;
+    private String name;
 
     @Column
-    public Double longitude;
+    private Double longitude;
 
     @Column
-    public Double latitude;
+    private Double latitude;
 
     public VaccineCenter(String name, Double longitude, Double latitude) {
         this.name = name;
@@ -22,5 +22,29 @@ public class VaccineCenter extends Model<VaccineCenter> {
     }
 
     public VaccineCenter() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 }

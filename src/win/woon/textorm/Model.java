@@ -8,13 +8,18 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import static win.woon.textorm.TextORM.*;
 
 public class Model<T> {
-    @Column
-    public int id = -1;
+    @Column()
+    private int id = -1;
+
+    public int getId() {
+        return id;
+    }
 
     public void save() {
         try {
@@ -64,15 +69,26 @@ public class Model<T> {
     }
 
     private HashMap<String, String> toHashMap() {
-        Field[] fields = this.getClass().getFields();
         HashMap<String, String> hashMap = new HashMap<>();
+
+        // Superclass walking
+        Field pkField = findFieldInSuperclasses(this.getClass(), "id");
+
+        if (pkField != null) {
+            try {
+                pkField.setAccessible(true);
+                hashMap.put(pkField.getName(), pkField.get(this).toString());
+            } catch (Exception ignored) {
+            }
+        }
+
+        List<Field> fields = getAllColumnFields(this.getClass());
         for (Field field : fields) {
-            if (field.getAnnotation(Column.class) != null) {
-                try {
-                    hashMap.put(field.getName(), field.get(this).toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                field.setAccessible(true);
+                hashMap.put(field.getName(), field.get(this).toString());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return hashMap;

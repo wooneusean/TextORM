@@ -1,2 +1,3 @@
-tableName:Vaccine|autoIncrement:5
-tableName:VaccineCenter|autoIncrement:2
+autoIncrement:6|tableName:Vaccine
+autoIncrement:3|tableName:VaccineCenter
+autoIncrement:4|tableName:Account

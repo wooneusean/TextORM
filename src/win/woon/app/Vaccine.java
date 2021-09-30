@@ -8,16 +8,16 @@ import win.woon.textorm.Repository;
 public class Vaccine extends Model<Vaccine> {
 
     @Column
-    public String vaccineName;
+    private String vaccineName;
 
     @Column
-    public int daysBetweenDoses;
+    private int daysBetweenDoses;
 
     @Column
-    public double cost;
+    private double cost;
 
     @Column
-    public boolean isFinished = false;
+    private boolean isFinished = false;
 
     public Vaccine(String vaccineName, int daysBetweenDoses, double cost, boolean isFinished) {
         this.cost = cost;
@@ -27,5 +27,37 @@ public class Vaccine extends Model<Vaccine> {
     }
 
     public Vaccine() {
+    }
+
+    public String getVaccineName() {
+        return vaccineName;
+    }
+
+    public void setVaccineName(String vaccineName) {
+        this.vaccineName = vaccineName;
+    }
+
+    public int getDaysBetweenDoses() {
+        return daysBetweenDoses;
+    }
+
+    public void setDaysBetweenDoses(int daysBetweenDoses) {
+        this.daysBetweenDoses = daysBetweenDoses;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
     }
 }

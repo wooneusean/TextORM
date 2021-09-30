@@ -78,16 +78,13 @@ public class TextORM {
     }
 
     private static <T> void updateInstanceFields(T modelInstance, String key, String value) {
-        Field currentField;
-        try {
-            currentField = modelInstance.getClass().getField(key);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-            return;
-        }
+        Field currentField = findFieldInSuperclasses(modelInstance.getClass(), key);
+
+        if (currentField == null) return;
+
+        currentField.setAccessible(true);
 
         Object newValue = value;
-
         if (Integer.class.isAssignableFrom(currentField.getType()) || int.class.isAssignableFrom(currentField.getType())) {
             newValue = Integer.parseInt(value);
         } else if (Boolean.class.isAssignableFrom(currentField.getType()) || boolean.class.isAssignableFrom(currentField.getType())) {
@@ -123,9 +120,10 @@ public class TextORM {
     }
 
     private static <T> HashMap<String, String> toHashMap(Class<T> model) {
-        Field[] fields = model.getFields();
+        Field[] fields = model.getDeclaredFields();
         HashMap<String, String> hashMap = new HashMap<>();
         for (Field field : fields) {
+            field.setAccessible(true);
             if (field.getAnnotation(Column.class) != null) {
                 try {
                     hashMap.put(field.getName(), field.getName());
@@ -185,5 +183,36 @@ public class TextORM {
             }
             file.createNewFile();
         }
+    }
+
+    public static <T> Field findFieldInSuperclasses(Class<T> clazz, String fieldName) {
+        Class<?> current = clazz;
+        Field foundField = null;
+        do {
+            try {
+                foundField = current.getDeclaredField(fieldName);
+            } catch (Exception ignored) {
+            }
+        } while ((current = current.getSuperclass()) != null);
+        return foundField;
+    }
+
+    public static <T> List<Field> getAllColumnFields(Class<T> clazz) {
+        Class<?> current = clazz;
+        ArrayList<Field> columnFields = new ArrayList<>();
+        do {
+            try {
+                Field[] fields = current.getDeclaredFields();
+                for (Field field : fields) {
+                    Column column = field.getAnnotation(Column.class);
+                    if (column != null) {
+                        columnFields.add(field);
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+        } while ((current = current.getSuperclass()) != null);
+
+        return columnFields;
     }
 }
