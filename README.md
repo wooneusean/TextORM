@@ -25,7 +25,7 @@ Vaccine sinovac = new Vaccine("Sinovac", 21, false).save();
 sinovac.setdaysBetweenDoses(14);
 sinovac.save();
 
-Vaccine finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
+List<Vaccine> finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
 for (Vaccine vaccine : finishedVaccines) {
     vaccine.delete();
 }
