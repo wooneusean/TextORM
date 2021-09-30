@@ -21,11 +21,11 @@ new Vaccine("Sinovac", 21, false).save();
 
 All-in-one example
 ```java
-Vaccine sinovac = new Vaccine("Sinovac", 21, 120.00, false).save();
-foundVaccine.setCost(100.00);
-foundVaccine.save();
+Vaccine sinovac = new Vaccine("Sinovac", 21, false).save();
+sinovac.setdaysBetweenDoses(14);
+sinovac.save();
 
-Vaccine finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
+List<Vaccine> finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
 for (Vaccine vaccine : finishedVaccines) {
     vaccine.delete();
 }
