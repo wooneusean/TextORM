@@ -23,13 +23,14 @@ public class TestApp {
             }
         }
 
-        Vaccine sinovac = TextORM.getOne(Vaccine.class, dataMap -> Objects.equals(dataMap.get("vaccineName"), "Sinovac"));
+        Vaccine foundVaccine = TextORM.getOne(Vaccine.class, dataMap -> Objects.equals(dataMap.get("vaccineName"), "Chapalang Vaccine"));
 
-        if (sinovac != null) {
-            System.out.printf("[%d] %s, %d day(s) between doses. Finished: %b%n", sinovac.getId(), sinovac.getVaccineName(), sinovac.getDaysBetweenDoses(), sinovac.isFinished());
-            sinovac.setDaysBetweenDoses((int) (Math.random() * 100));
-            sinovac.save();
+        if (foundVaccine != null) {
+            System.out.printf("[%d] %s, %d day(s) between doses. Finished: %b%n", foundVaccine.getId(), foundVaccine.getVaccineName(), foundVaccine.getDaysBetweenDoses(), foundVaccine.isFinished());
+            System.out.println("Deleting " + foundVaccine.getVaccineName());
+            foundVaccine.delete();
         }
+
 
         VaccineCenter center = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"));
         if (center != null) {
@@ -53,9 +54,10 @@ public class TestApp {
         if (!Files.exists(TextORM.getRepositoryStorageLocation(Vaccine.class))) {
             new Vaccine("Sinovac", 21, 120.00, false).save();
             new Vaccine("Moderna", 14, 200.00, true).save();
-            new Vaccine("Pfizer", 14, 160.00, false).save();
+            new Vaccine("Pfizer", 14, 160.00, true).save();
             new Vaccine("Sinopharm", 14, 240.00, false).save();
-            new Vaccine("Johnson & Johnson", 21, 140.00, false).save();
+            new Vaccine("Johnson & Johnson", 21, 140.00, true).save();
+            new Vaccine("Chapalang Vaccine", 2, 2.00, true).save();
         }
     }
 
