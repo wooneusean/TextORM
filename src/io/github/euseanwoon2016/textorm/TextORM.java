@@ -25,7 +25,7 @@ public class TextORM {
         TextORM.metaStoragePath = Paths.get(metaStoragePath);
     }
 
-    public static <T extends Model<T>> List<T> getAll(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
+    public static <T extends Model> List<T> getAll(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
         ArrayList<T> models = new ArrayList<>();
 
         List<String> lines = readModelRepository(model);
@@ -53,7 +53,7 @@ public class TextORM {
         return models;
     }
 
-    public static <T> T getOne(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
+    public static <T extends Model> T getOne(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
         List<String> lines = readModelRepository(model);
 
         if (lines == null) return null;
@@ -217,5 +217,20 @@ public class TextORM {
         } while ((current = current.getSuperclass()) != null);
 
         return columnFields;
+    }
+
+    public static <T> List<Field> getAllFieldsWhere(Class<T> clazz, Function<Field, Boolean> filter) {
+        Class<?> current = clazz;
+        ArrayList<Field> foundFields = new ArrayList<>();
+        do {
+            Field[] fields = current.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (filter.apply(field)) {
+                    foundFields.add(field);
+                }
+            }
+        } while ((current = current.getSuperclass()) != null);
+        return foundFields;
     }
 }

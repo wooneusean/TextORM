@@ -7,7 +7,7 @@ import io.github.euseanwoon2016.textorm.Repository;
 import java.time.LocalDate;
 
 @Repository
-public class Person extends Model<Person> {
+public class Person extends Model {
     @Column
     private String name;
 

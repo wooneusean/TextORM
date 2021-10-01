@@ -8,13 +8,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
-public class TestApp {
+public class Main {
     public static void main(String[] args) {
         TextORM.setStoragePath("storage");
         TextORM.setMetaStoragePath("storage");
 
         seedModels();
 
+        // Example: Getting multiple
         List<Vaccine> vaccines = TextORM.getAll(Vaccine.class, dataMap -> Integer.parseInt(dataMap.get("daysBetweenDoses")) <= 14);
 
         if (vaccines != null) {
@@ -23,6 +24,7 @@ public class TestApp {
             }
         }
 
+        // Example: Getting one
         Vaccine foundVaccine = TextORM.getOne(Vaccine.class, dataMap -> Objects.equals(dataMap.get("vaccineName"), "Chapalang Vaccine"));
 
         if (foundVaccine != null) {
@@ -31,16 +33,20 @@ public class TestApp {
             foundVaccine.delete();
         }
 
-
-        VaccineCenter center = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"));
-        if (center != null) {
-            System.out.println(center.getName());
-        }
-
+        // Test: Inheritance, Account class inherits Person class.
         Account account1 = TextORM.getOne(Account.class, dataMap -> Double.parseDouble(dataMap.get("balance")) <= 3000.00);
         if (account1 != null) {
             System.out.println(account1);
             System.out.println("Age of " + account1.getName() + " is " + ChronoUnit.YEARS.between(account1.getBirthDate(), LocalDate.now()));
+        }
+
+        // Example: Including from foreign key
+        VaccineCenter movenpick = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"));
+        if (movenpick != null) {
+            movenpick.include(Vaccine.class);
+            System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b", movenpick.getName(), movenpick.getVaccine().getVaccineName(), movenpick.getVaccine().getCost(), movenpick.getVaccine().isFinished());
+            movenpick.getVaccine().setCost(Math.round(100.0 * (500.0 * Math.random())) / 100.0);
+            movenpick.save();
         }
     }
 
@@ -63,7 +69,14 @@ public class TestApp {
 
     static void seedCenters() {
         if (!Files.exists(TextORM.getRepositoryStorageLocation(VaccineCenter.class))) {
-            new VaccineCenter("Movenpick", 23.00, 304.00).save();
+            VaccineCenter movenpick = new VaccineCenter("Movenpick", 23.00, 304.00);
+
+            Vaccine sinovac = TextORM.getOne(Vaccine.class, dataMap -> Objects.equals(dataMap.get("vaccineName"), "Sinovac"));
+            if (sinovac != null) {
+                movenpick.setVaccineId(sinovac.getId());
+            }
+            movenpick.save();
+
             new VaccineCenter("Bukit Jalil Stadium", 44.00, 201.00).save();
         }
     }

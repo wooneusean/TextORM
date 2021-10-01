@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class Model<T> {
+public class Model {
     @Column()
     private int id = -1;
 
@@ -58,6 +58,25 @@ public class Model<T> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        List<Field> foreignKeyAnnotatedFields = TextORM.getAllFieldsWhere(this.getClass(), field -> field.getAnnotation(ForeignKey.class) != null);
+        for (Field field : foreignKeyAnnotatedFields) {
+            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
+
+            if (foreignKey == null) continue;
+
+            if (!Model.class.isAssignableFrom(field.getType())) {
+                System.err.println("The Foreign Key annotated object '" + field.getName() + "' on class '" + this.getClass().getSimpleName() + "' does not extend the Model class.");
+                return;
+            }
+
+            try {
+                field.setAccessible(true);
+                Model model = (Model) field.get(this);
+                model.save();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     public boolean delete() {
@@ -87,6 +106,48 @@ public class Model<T> {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public <T extends Model> void include(Class<T> toInclude) {
+        List<Field> toIncludeFields = TextORM.getAllFieldsWhere(this.getClass(), field -> field.getType() == toInclude);
+
+        if (toIncludeFields.size() <= 0) {
+            System.err.println("This model has no relations with '" + toInclude.getSimpleName() + "'.");
+            return;
+        }
+
+        for (Field field : toIncludeFields) {
+            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
+
+            if (foreignKey == null) continue;
+
+            // By right, this should never get triggered,
+            // but I'm leaving this here. Because why not.
+            if (!Model.class.isAssignableFrom(field.getType())) {
+                System.err.println("The Foreign Key annotated object does not extend the Model class.");
+                return;
+            }
+
+            String otherKeyFieldName = foreignKey.foreignKey();
+
+            try {
+                Field otherKeyField = this.getClass().getDeclaredField(otherKeyFieldName);
+
+                otherKeyField.setAccessible(true);
+                int otherKeyValue = (int) otherKeyField.get(this);
+
+                T includedObject = TextORM.getOne(toInclude, dataMap -> Integer.parseInt(dataMap.get("id")) == otherKeyValue);
+
+                if (includedObject == null) {
+                    System.err.println("The foreign key associated with this object does not belong to any records.");
+                    return;
+                }
+
+                field.set(this, includedObject);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private String toSaveString() {

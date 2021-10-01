@@ -5,7 +5,7 @@ import io.github.euseanwoon2016.textorm.Model;
 import io.github.euseanwoon2016.textorm.Repository;
 
 @Repository
-public class Vaccine extends Model<Vaccine> {
+public class Vaccine extends Model {
 
     @Column
     private String vaccineName;
