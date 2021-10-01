@@ -24,13 +24,14 @@ new Vaccine("Sinovac", 21, 120.00, false).save();
 All-in-one example
 
 ```java
-Vaccine sinovac=new Vaccine("Sinovac", 21, 120.00, false).save();
+Vaccine sinovac = new Vaccine("Sinovac", 21, 120.00, false);
 sinovac.setdaysBetweenDoses(14);
 sinovac.save();
 
-List<Vaccine> finishedVaccines=TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
-for(Vaccine vaccine : finishedVaccines){
-vaccine.delete();
+List<Vaccine> finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
+for(Vaccine vaccine : finishedVaccines) {
+    vaccine.delete();
+}
 ```
 
 ## Creating Models
@@ -38,9 +39,8 @@ vaccine.delete();
 Here is an example model
 
 ```java
-
 @Repository
-public class Vaccine extends Model<Vaccine> {
+public class Vaccine extends Model {
 
     @Column
     private String vaccineName;
@@ -49,19 +49,21 @@ public class Vaccine extends Model<Vaccine> {
     private int daysBetweenDoses;
 
     @Column
+    private double cost;
+
+    @Column
     private boolean isFinished = false;
 
-    public Vaccine(String vaccineName, int daysBetweenDoses, boolean isFinished) {
+    public Vaccine(String vaccineName, int daysBetweenDoses, double cost, boolean isFinished) {
+        this.cost = cost;
         this.vaccineName = vaccineName;
         this.daysBetweenDoses = daysBetweenDoses;
         this.isFinished = isFinished;
     }
 
-    // This is REQUIRED, it is used under the hood.
-    // I am an incompetent programmer.
     public Vaccine() {
     }
-
+    
     /* getters and setters... */
 }
 ```
