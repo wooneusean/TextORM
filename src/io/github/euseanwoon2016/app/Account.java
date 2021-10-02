@@ -13,6 +13,9 @@ public class Account extends Person {
     @Column
     private String password;
 
+    @Column
+    private int vaccineCenterId;
+
     public Account(String name, int age, double balance, LocalDate birthDate, String username, String password) {
         super(name, age, balance, birthDate);
         this.username = username;

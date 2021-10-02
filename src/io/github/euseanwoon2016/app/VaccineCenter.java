@@ -1,9 +1,8 @@
 package io.github.euseanwoon2016.app;
 
-import io.github.euseanwoon2016.textorm.Column;
-import io.github.euseanwoon2016.textorm.ForeignKey;
-import io.github.euseanwoon2016.textorm.Model;
-import io.github.euseanwoon2016.textorm.Repository;
+import io.github.euseanwoon2016.textorm.*;
+
+import java.util.List;
 
 @Repository
 public class VaccineCenter extends Model {
@@ -19,8 +18,11 @@ public class VaccineCenter extends Model {
     @Column
     private int vaccineId;
 
-    @ForeignKey(foreignKey = "vaccineId")
+    @HasOne(foreignKey = "vaccineId")
     private Vaccine vaccine;
+
+    @HasMany(targetKey = "vaccineCenterId")
+    private Account[] assignedAccounts;
 
     public VaccineCenter(String name, Double longitude, Double latitude) {
         this.name = name;
@@ -29,6 +31,10 @@ public class VaccineCenter extends Model {
     }
 
     public VaccineCenter() {
+    }
+
+    public Account[] getAssignedAccounts() {
+        return assignedAccounts;
     }
 
     public Vaccine getVaccine() {

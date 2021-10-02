@@ -40,13 +40,23 @@ public class Main {
             System.out.println("Age of " + account1.getName() + " is " + ChronoUnit.YEARS.between(account1.getBirthDate(), LocalDate.now()));
         }
 
-        // Example: Including from foreign key
+        // Example: Lazy loading models
         VaccineCenter movenpick = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"));
         if (movenpick != null) {
             movenpick.include(Vaccine.class);
-            System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b", movenpick.getName(), movenpick.getVaccine().getVaccineName(), movenpick.getVaccine().getCost(), movenpick.getVaccine().isFinished());
-            movenpick.getVaccine().setCost(Math.round(100.0 * (500.0 * Math.random())) / 100.0);
+            System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b%n", movenpick.getName(), movenpick.getVaccine().getVaccineName(), movenpick.getVaccine().getCost(), movenpick.getVaccine().isFinished());
+            movenpick.getVaccine().setCost(Math.round(500.0 * Math.random()));
             movenpick.save();
+        }
+
+        // Example: Eager loading models
+        VaccineCenter jalil = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Bukit Jalil Stadium"), Vaccine.class, Account.class);
+        if (jalil != null) {
+            System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b%n", jalil.getName(), jalil.getVaccine().getVaccineName(), jalil.getVaccine().getCost(), jalil.getVaccine().isFinished());
+            for (Account account : jalil.getAssignedAccounts()) {
+                System.out.println(account.getName());
+            }
+            jalil.save();
         }
     }
 
@@ -77,7 +87,9 @@ public class Main {
             }
             movenpick.save();
 
-            new VaccineCenter("Bukit Jalil Stadium", 44.00, 201.00).save();
+            VaccineCenter jalil = new VaccineCenter("Bukit Jalil Stadium", 44.00, 201.00);
+            jalil.setVaccineId(3);
+            jalil.save();
         }
     }
 

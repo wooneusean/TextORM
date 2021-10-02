@@ -24,13 +24,17 @@ new Vaccine("Sinovac", 21, 120.00, false).save();
 All-in-one example
 
 ```java
-Vaccine sinovac = new Vaccine("Sinovac", 21, 120.00, false);
-sinovac.setdaysBetweenDoses(14);
-sinovac.save();
+public class Main {
+    public static void main(String[] args) {
+        Vaccine sinovac = new Vaccine("Sinovac", 21, 120.00, false);
+        sinovac.setdaysBetweenDoses(14);
+        sinovac.save();
 
-List<Vaccine> finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
-for(Vaccine vaccine : finishedVaccines) {
-    vaccine.delete();
+        List<Vaccine> finishedVaccines = TextORM.getAll(Vaccine.class, dataMap -> Boolean.parseBoolean(dataMap.get("isFinished")));
+        for (Vaccine vaccine : finishedVaccines) {
+            vaccine.delete();
+        }
+    }
 }
 ```
 
@@ -75,7 +79,6 @@ Inheritance works as you'd expect. View example below.
 in `Person.java`
 
 ```java
-
 @Repository
 public class Person extends Model {
     @Column
@@ -107,7 +110,6 @@ public class Person extends Model {
 in `Account.java`
 
 ```java
-
 @Repository
 public class Account extends Person {
     @Column
@@ -116,27 +118,34 @@ public class Account extends Person {
     @Column
     private String password;
 
+    @Column
+    private int vaccineCenterId;
+
     public Account(String name, int age, double balance, LocalDate birthDate, String username, String password) {
         super(name, age, balance, birthDate);
         this.username = username;
         this.password = password;
     }
 
-    public Account() {
+    public Account(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
+    public Account() {
+    }
+    
     /* getters and setters... */
 }
 ```
 
-## Eager Loading for Related Models
+## Lazy Loading for Related Models
 
-TextORM also supports eager loading of related models. See below.
+TextORM also supports lazy loading of related models. See below.
 
 in `VaccineCenter.java`
 
 ```java
-
 @Repository
 public class VaccineCenter extends Model {
     @Column
@@ -151,8 +160,11 @@ public class VaccineCenter extends Model {
     @Column
     private int vaccineId;
 
-    @ForeignKey(foreignKey = "vaccineId")
+    @HasOne(foreignKey = "vaccineId")
     private Vaccine vaccine;
+
+    @HasMany(targetKey = "vaccineCenterId")
+    private Account[] assignedAccounts;
 
     public VaccineCenter(String name, Double longitude, Double latitude) {
         this.name = name;
@@ -169,15 +181,135 @@ public class VaccineCenter extends Model {
 
 in `Main.java`
 ```java
-VaccineCenter movenpick = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"));
-if (movenpick != null) {
-    movenpick.include(Vaccine.class);
-    System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b", movenpick.getName(), movenpick.getVaccine().getVaccineName(), movenpick.getVaccine().getCost(), movenpick.getVaccine().isFinished());
-    movenpick.getVaccine().setCost(Math.round(100.0 * (500.0 * Math.random())) / 100.0);
-    
-    // Saving the parent model also saves the included models.
-    movenpick.save();
+public class Main {
+    public static void main(String[] args) {
+        VaccineCenter movenpick = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"));
+        if (movenpick != null) {
+            movenpick.include(Vaccine.class);
+            System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b", movenpick.getName(), movenpick.getVaccine().getVaccineName(), movenpick.getVaccine().getCost(), movenpick.getVaccine().isFinished());
+            movenpick.getVaccine().setCost(Math.round(100.0 * (500.0 * Math.random())) / 100.0);
+
+            // Saving the parent model also saves the included models.
+            movenpick.save();
+        }
+    }
 }
 ```
 
-Still planning to add one-to-many relationships.
+## Eager Loading for Related Models
+
+To use eager loading in TextORM, simply list down the models you wish to include when using `getOne()` or `getAll()`. See below.
+
+in `Main.java`
+```java
+public class Main {
+    public static void main(String[] args) {
+        VaccineCenter movenpick = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Movenpick"), Vaccine.class /* <- Here */);
+        if (movenpick != null) {
+            System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b", movenpick.getName(), movenpick.getVaccine().getVaccineName(), movenpick.getVaccine().getCost(), movenpick.getVaccine().isFinished());
+            movenpick.getVaccine().setCost(Math.round(100.0 * (500.0 * Math.random())) / 100.0);
+
+            // Saving the parent model also saves the included models.
+            movenpick.save();
+        }
+    }
+}
+```
+
+## One-To-Many Relationship
+
+To use one-to-many relationship in your models, A field of type Array must be annotated with `@HasMany(targetKey = "key")`
+where `"key"` is the name of the foreign key in the included model which points to the including model. See below.
+
+in `VaccineCenter.java`
+
+```java
+@Repository
+public class VaccineCenter extends Model {
+    @Column
+    private String name;
+
+    @Column
+    private Double longitude;
+
+    @Column
+    private Double latitude;
+
+    @Column
+    private int vaccineId;
+
+    @HasOne(foreignKey = "vaccineId")
+    private Vaccine vaccine;
+
+    // Keep in mind, this field MUST BE of type T[]
+    // and not List<T> or ArrayList<T> or any other list.
+    @HasMany(targetKey = "vaccineCenterId") /* <- Here */
+    private Account[] assignedAccounts;
+
+    public VaccineCenter(String name, Double longitude, Double latitude) {
+        this.name = name;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
+    public VaccineCenter() {
+    }
+
+    /* getters and setters... */
+}
+```
+
+in `Account.java`
+
+```java
+@Repository
+public class Account extends Person {
+    @Column
+    private String username;
+
+    @Column
+    private String password;
+
+    // targetKey = "vaccineCenterId"
+    // is referring to this field here.
+    @Column
+    private int vaccineCenterId;
+
+    public Account(String name, int age, double balance, LocalDate birthDate, String username, String password) {
+        super(name, age, balance, birthDate);
+        this.username = username;
+        this.password = password;
+    }
+
+    public Account(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public Account() {
+    }
+    
+    /* getters and setters... */
+}
+```
+
+Then, including it is as usual, through eager or lazy loading. Both works. See below.
+
+in `Main.java`
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        VaccineCenter jalil = TextORM.getOne(VaccineCenter.class, dataMap -> Objects.equals(dataMap.get("name"), "Bukit Jalil Stadium"), Vaccine.class, Account.class);
+        if (jalil != null) {
+            System.out.printf("The vaccine at %s is %s and costs RM %,.2f. Is finished: %b%n", jalil.getName(), jalil.getVaccine().getVaccineName(), jalil.getVaccine().getCost(), jalil.getVaccine().isFinished());
+            for (Account account : jalil.getAssignedAccounts()) {
+                System.out.println(account.getName());
+            }
+            
+            // Saving the parent model also saves all included models.
+            jalil.save();
+        }
+    }
+}
+```

@@ -25,7 +25,7 @@ public class TextORM {
         TextORM.metaStoragePath = Paths.get(metaStoragePath);
     }
 
-    public static <T extends Model> List<T> getAll(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
+    public static <T extends Model> List<T> getAll(Class<T> model, Function<HashMap<String, String>, Boolean> filter, Class<? extends Model>... includes) {
         ArrayList<T> models = new ArrayList<>();
 
         List<String> lines = readModelRepository(model);
@@ -44,6 +44,10 @@ public class TextORM {
                         updateInstanceFields(modelInstance, entry.getKey(), entry.getValue());
                     }
 
+                    for (Class<? extends Model> include : includes) {
+                        modelInstance.include(include);
+                    }
+
                     models.add(modelInstance);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -53,35 +57,42 @@ public class TextORM {
         return models;
     }
 
-    public static <T extends Model> T getOne(Class<T> model, Function<HashMap<String, String>, Boolean> filter) {
+    public static <T extends Model> T getOne(Class<T> model, Function<HashMap<String, String>, Boolean> filter, Class<? extends Model>... includes) {
         List<String> lines = readModelRepository(model);
 
         if (lines == null) return null;
 
-        T modelInstance;
-
-        try {
-            modelInstance = model.getConstructor().newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        T modelInstance = null;
 
         for (String line : lines) {
             HashMap<String, String> modelData = SaveString.toHashMap(line);
             if (filter.apply(modelData)) {
+                try {
+                    modelInstance = model.getConstructor().newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
                 for (var entry : modelData.entrySet()) {
                     updateInstanceFields(modelInstance, entry.getKey(), entry.getValue());
                 }
             }
         }
+
+        if (modelInstance == null) return null;
+
+        for (Class<? extends Model> include : includes) {
+            modelInstance.include(include);
+        }
+
         return modelInstance;
     }
 
-    private static <T> void updateInstanceFields(T modelInstance, String key, String value) {
+    private static <T> boolean updateInstanceFields(T modelInstance, String key, String value) {
         Field currentField = findFieldInSuperclasses(modelInstance.getClass(), key);
 
-        if (currentField == null) return;
+        if (currentField == null) return false;
 
         currentField.setAccessible(true);
 
@@ -98,9 +109,11 @@ public class TextORM {
 
         try {
             currentField.set(modelInstance, newValue);
+            return true;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public static <T> Path getRepositoryStorageLocation(Class<T> model) {
@@ -140,8 +153,8 @@ public class TextORM {
     }
 
     protected static String getColumnName(Field field) {
-        Column column = field.getAnnotation(Column.class);
-        if (column == null) return null;
+        Column columnAnnotation = field.getAnnotation(Column.class);
+        if (columnAnnotation == null) return null;
 
         return field.getName();
     }
@@ -207,8 +220,8 @@ public class TextORM {
             try {
                 Field[] fields = current.getDeclaredFields();
                 for (Field field : fields) {
-                    Column column = field.getAnnotation(Column.class);
-                    if (column != null) {
+                    Column columnAnnotation = field.getAnnotation(Column.class);
+                    if (columnAnnotation != null) {
                         columnFields.add(field);
                     }
                 }
