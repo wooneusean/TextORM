@@ -38,6 +38,7 @@ public class Main {
         if (account1 != null) {
             System.out.println(account1);
             System.out.println("Age of " + account1.getName() + " is " + ChronoUnit.YEARS.between(account1.getBirthDate(), LocalDate.now()));
+            System.out.printf("%s is %s%n", account1.getName(), account1.getRace());
         }
 
         // Example: Lazy loading models
@@ -95,9 +96,9 @@ public class Main {
 
     static void seedAccount() {
         if (!Files.exists(TextORM.getRepositoryStorageLocation(Account.class))) {
-            new Account("John Doe", 24, 4000.00, LocalDate.of(2001, 3, 6), "j.doe", "123").save();
-            new Account("Jane Smith", 24, 2300.00, LocalDate.of(2000, 6, 26), "j.smith", "123").save();
-            new Account("Julian Summers", 24, 5000.00, LocalDate.of(2001, 12, 2), "summers.j", "123").save();
+            new Account("John Doe", 24, 4000.00, LocalDate.of(2001, 3, 6), PersonRace.CHINESE, "j.doe", "123", 1).save();
+            new Account("Jane Smith", 24, 2300.00, LocalDate.of(2000, 6, 26), PersonRace.CHINESE, "j.smith", "123", 2).save();
+            new Account("Julian Summers", 24, 5000.00, LocalDate.of(2001, 12, 2), PersonRace.CHINESE, "summers.j", "123", 1).save();
         }
     }
 }

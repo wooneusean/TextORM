@@ -105,6 +105,8 @@ public class TextORM {
             newValue = Double.parseDouble(value);
         } else if (LocalDate.class.isAssignableFrom(currentField.getType())) {
             newValue = LocalDate.parse(value);
+        } else if (Enum.class.isAssignableFrom(currentField.getType())) {
+            newValue = Enum.valueOf((Class<Enum>) currentField.getType(), value);
         }
 
         try {

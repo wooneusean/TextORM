@@ -16,10 +16,11 @@ public class Account extends Person {
     @Column
     private int vaccineCenterId;
 
-    public Account(String name, int age, double balance, LocalDate birthDate, String username, String password) {
-        super(name, age, balance, birthDate);
+    public Account(String name, int age, double balance, LocalDate birthDate, PersonRace race, String username, String password, int vaccineCenterId) {
+        super(name, age, balance, birthDate, race);
         this.username = username;
         this.password = password;
+        this.vaccineCenterId = vaccineCenterId;
     }
 
     public Account(String username, String password) {

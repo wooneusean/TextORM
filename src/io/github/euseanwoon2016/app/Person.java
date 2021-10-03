@@ -20,14 +20,26 @@ public class Person extends Model {
     @Column
     private LocalDate birthDate;
 
-    public Person(String name, int age, double balance, LocalDate birthDate) {
+    @Column
+    private PersonRace race;
+
+    public Person(String name, int age, double balance, LocalDate birthDate, PersonRace race) {
         this.name = name;
         this.age = age;
         this.balance = balance;
         this.birthDate = birthDate;
+        this.race = race;
     }
 
     public Person() {
+    }
+
+    public PersonRace getRace() {
+        return race;
+    }
+
+    public void setRace(PersonRace race) {
+        this.race = race;
     }
 
     public LocalDate getBirthDate() {
