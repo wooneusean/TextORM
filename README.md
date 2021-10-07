@@ -164,7 +164,7 @@ public class VaccineCenter extends Model {
     private Vaccine vaccine;
 
     @HasMany(targetKey = "vaccineCenterId")
-    private Account[] assignedAccounts;
+    private List<Account> assignedAccounts;
 
     public VaccineCenter(String name, Double longitude, Double latitude) {
         this.name = name;
@@ -240,11 +240,9 @@ public class VaccineCenter extends Model {
 
     @HasOne(foreignKey = "vaccineId")
     private Vaccine vaccine;
-
-    // Keep in mind, this field MUST BE of type T[]
-    // and not List<T> or ArrayList<T> or any other list.
+    
     @HasMany(targetKey = "vaccineCenterId") /* <- Here */
-    private Account[] assignedAccounts;
+    private List<Account> assignedAccounts;
 
     public VaccineCenter(String name, Double longitude, Double latitude) {
         this.name = name;
@@ -306,6 +304,10 @@ public class Main {
             for (Account account : jalil.getAssignedAccounts()) {
                 System.out.println(account.getName());
             }
+            
+            // Example of adding a new model
+            // Account pakAbu = new Account("Pak Abu", 63, 400.00, LocalDate.of(1967, 4, 23), PersonRace.MALAY, "pakabu113", "123qwe", jalil.getId());
+            // jalil.getAssignedAccounts().add(pakAbu);
             
             // Saving the parent model also saves all included models.
             jalil.save();

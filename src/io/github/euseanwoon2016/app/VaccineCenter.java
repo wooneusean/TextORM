@@ -22,7 +22,7 @@ public class VaccineCenter extends Model {
     private Vaccine vaccine;
 
     @HasMany(targetKey = "vaccineCenterId")
-    private Account[] assignedAccounts;
+    private List<Account> assignedAccounts;
 
     public VaccineCenter(String name, Double longitude, Double latitude) {
         this.name = name;
@@ -33,7 +33,7 @@ public class VaccineCenter extends Model {
     public VaccineCenter() {
     }
 
-    public Account[] getAssignedAccounts() {
+    public List<Account> getAssignedAccounts() {
         return assignedAccounts;
     }
 

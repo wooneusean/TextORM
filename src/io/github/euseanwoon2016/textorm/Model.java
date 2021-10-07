@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -88,7 +87,7 @@ public class Model {
         for (Field field : hasManyAnnotatedFields) {
             field.setAccessible(true);
             try {
-                Model[] modelList = (Model[]) field.get(this);
+                List<Model> modelList = (List<Model>) field.get(this);
                 if (modelList == null) return;
 
                 for (Model model : modelList) {
@@ -130,7 +129,7 @@ public class Model {
     }
 
     public <T extends Model> void include(Class<T> toInclude) {
-        List<Field> modelFields = TextORM.getAllFieldsWhere(this.getClass(), field -> field.getType() == toInclude || field.getType().getComponentType() == toInclude);
+        List<Field> modelFields = TextORM.getAllFieldsWhere(this.getClass(), field -> field.getType() == toInclude || TextORM.getParameterizedClass(field) == toInclude);
 
         if (modelFields.size() > 1) {
             System.err.printf("There are multiple fields with the type '%s' when trying to include it into %s%n", toInclude.getSimpleName(), this.getClass().getSimpleName());
@@ -193,9 +192,10 @@ public class Model {
     }
 
     private <T extends Model> void includeMany(Class<T> toInclude) {
-        List<Field> includeHasMany = TextORM.getAllFieldsWhere(this.getClass(), field -> field.getType().getComponentType() == toInclude && field.getAnnotation(HasMany.class) != null);
+        List<Field> includeHasMany = TextORM.getAllFieldsWhere(this.getClass(), field -> field.getType() == List.class && TextORM.getParameterizedClass(field) == toInclude && field.getAnnotation(HasMany.class) != null);
 
-        if (includeHasMany.size() <= 0) {
+
+        if (includeHasMany.size() == 0) {
             System.err.println("This model has no relations with '" + toInclude.getSimpleName() + "'!\n");
             return;
         }
@@ -214,7 +214,7 @@ public class Model {
 
         if (toIncludeObjects != null) {
             try {
-                hasManyField.set(this, toIncludeObjects.toArray((T[]) Array.newInstance(toInclude, toIncludeObjects.size())));
+                hasManyField.set(this, toIncludeObjects);
             } catch (Exception e) {
                 e.printStackTrace();
             }

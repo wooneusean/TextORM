@@ -1,2 +1,0 @@
-vaccineId:1|latitude:304.0|name:Movenpick|id:1|longitude:23.0
-vaccineId:3|latitude:201.0|name:Bukit Jalil Stadium|id:2|longitude:44.0

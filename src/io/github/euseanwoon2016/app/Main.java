@@ -57,6 +57,8 @@ public class Main {
             for (Account account : jalil.getAssignedAccounts()) {
                 System.out.println(account.getName());
             }
+//            Account pakAbu = new Account("Pak Abu", 63, 400.00, LocalDate.of(1967, 4, 23), PersonRace.MALAY, "pakabu113", "123qwe", jalil.getId());
+//            jalil.getAssignedAccounts().add(pakAbu);
             jalil.save();
         }
     }

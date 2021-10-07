@@ -3,6 +3,7 @@ package io.github.euseanwoon2016.textorm;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -195,12 +196,26 @@ public class TextORM {
 
     protected static void createFileIfEmpty(Path storageLocation) throws IOException {
         File file = storageLocation.toFile();
+        File parent = file.getParentFile();
+
         if (!file.exists()) {
-            if (!file.getParentFile().exists()) {
+            if (parent != null && !file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
             file.createNewFile();
         }
+    }
+
+    protected static Class<?> getParameterizedClass(Field field) {
+        ParameterizedType parameterizedType = null;
+
+        try {
+            parameterizedType = (ParameterizedType) field.getGenericType();
+        } catch (Exception e) {
+            return null;
+        }
+
+        return (Class<?>) parameterizedType.getActualTypeArguments()[0];
     }
 
     public static <T> Field findFieldInSuperclasses(Class<T> clazz, String fieldName) {
